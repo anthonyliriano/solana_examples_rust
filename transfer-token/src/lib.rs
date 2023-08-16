@@ -9,7 +9,7 @@ pub mod entrypoint {
         system_instruction,
         system_program
     };
-    use solana_sdk::{signature::Keypair, signer::Signer};
+    use solana_sdk::{signature::Keypair, signer::{Signer, keypair}};
     use std::fs;
     use std::fs::File;
     use std::io::{self, Read, Write};
@@ -25,11 +25,13 @@ pub mod entrypoint {
             let keypair = Keypair::new();
             println!("Output Keypair Public Key: {}, Secret Key: {:?}", keypair.pubkey(), keypair.secret());
             let file = File::create(file_path);
-            file.unwrap().write_all(keypair.to_base58_string());
+            file.unwrap().write_all(keypair.to_base58_string().as_bytes());
         }else {            
             let mut file = File::open(file_path);
             let mut contents = String::new();
             file.unwrap().read_to_string(&mut contents);
+            let keypair = Keypair::from_base58_string(contents.as_str());
+            println!("{}", keypair.pubkey());
         }
     }
 
